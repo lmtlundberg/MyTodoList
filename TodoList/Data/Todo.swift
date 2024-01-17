@@ -7,8 +7,8 @@
 
 import Foundation
 
-struct Todo {
+struct Todo: Identifiable {
     let id = UUID().uuidString
     let title: String
-    let isDone = false
+    var isDone = false
 }
