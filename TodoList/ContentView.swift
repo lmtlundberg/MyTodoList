@@ -60,6 +60,7 @@ struct ContentView: View {
                     }
                 }) { todo in
                     HStack{
+                        Image(systemName: todo.category.symbol)
                         Image(systemName: todo.isDone ? "checkmark.circle" : "circle")
                             .foregroundColor(todo.category.color)
                         

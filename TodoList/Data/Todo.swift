@@ -30,6 +30,17 @@ enum Category: String, CaseIterable, Identifiable{
             
         }
     }
+    
+    var symbol: Image {
+        switch self {
+        case .sport:
+            return Image(systemName: "figure.soccer")
+        case .work:
+            return Image(systemName: "info.bubble")
+        case .privateLife:
+            return Image(systemName: "desktopcomputer")
+        }
+    }
 }
 
 
