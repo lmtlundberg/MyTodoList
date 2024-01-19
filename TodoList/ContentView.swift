@@ -9,32 +9,77 @@ import SwiftUI
 
 struct ContentView: View {
     
-    @State private var todos = [Todo(title: "First Task"), Todo(title: "Second Task")]
+    @State private var todos = [Todo(title: "First Task", category: .privateLife)]
     @State var textiInput = ""
+    @State private var selectedCategory: Category = .sport
+    @State private var sortOption: TodoSortOption = .all
+
     
     var body: some View {
+        
         List {
-            ForEach(todos) { todo in
-                HStack{
-                    Image(systemName: todo.isDone ? "checkmark.circle" : "circle")
-                    Text(todo.title)
+        
+            Section(header: Text("New Todo")) {
+                Picker("Choose Category", selection: $selectedCategory) {
+                    Text("Work").tag(Category.work)
+                    Text("Private").tag(Category.privateLife)
+                    Text("Sport").tag(Category.sport)
                 }
-                .onTapGesture {
-                    if let index = todos.firstIndex(where: { $0.id == todo.id }) {
-                        todos[index].isDone.toggle()
+                .pickerStyle(MenuPickerStyle())
+                TextField("Enter new todo...", text: $textiInput)
+                    .onSubmit {
+                        guard !textiInput.isEmpty else { return }
+                        todos.append(Todo(title: textiInput, category: selectedCategory))
+                        textiInput = ""
                     }
-                }
             }
-            .onDelete(perform: { indexSet in
-                indexSet.forEach { index in
-                    todos.remove(at: index)
+            
+            Section(header: Text("Sort by Category")) {
+                Picker("Sort Option", selection: $sortOption) {
+                    Text("All").tag(TodoSortOption.all)
+                    Text("Work").tag(TodoSortOption.work)
+                    Text("Private").tag(TodoSortOption.privateLife)
+                    Text("Sport").tag(TodoSortOption.none)
                 }
-            })
-            TextField("Enter new task...", text: $textiInput)
-                .onSubmit {
-                    todos.append(Todo(title: textiInput))
-                    textiInput = ""
+                .pickerStyle(SegmentedPickerStyle())
+            }
+
+
+            
+            Section(header: Text("Todos")) {
+                ForEach(todos.filter { todo in
+                    switch sortOption {
+                    case .all:
+                        return true
+                    case .work:
+                        return todo.category == .work
+                    case .privateLife:
+                        return todo.category == .privateLife
+                    case .none:
+                        return todo.category == .sport
+                    }
+                }) { todo in
+                    HStack{
+                        Image(systemName: todo.isDone ? "checkmark.circle" : "circle")
+                            .foregroundColor(todo.category.color)
+                        
+                        Spacer()
+                        Text(todo.title)
+                            .foregroundColor(todo.category.color)
+                    }
+                    .onTapGesture {
+                        if let index = todos.firstIndex(where: { $0.id == todo.id }) {
+                            todos[index].isDone.toggle()
+                        }
+                    }
+                    .listRowSeparator(.hidden)
                 }
+                .onDelete(perform: { indexSet in
+                    indexSet.forEach { index in
+                        todos.remove(at: index)
+                    }
+                })
+            }
         }
     }
 }
