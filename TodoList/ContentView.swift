@@ -9,7 +9,12 @@ import SwiftUI
 
 struct ContentView: View {
     
-    @State private var todos = [Todo(title: "First Task", category: .privateLife)]
+    @State private var todos = [
+        Todo(title: "Example", category: .work),
+        Todo(title: "Example", category: .privateLife),
+        Todo(title: "Example", category: .sport),
+    ]
+    
     @State var textiInput = ""
     @State private var selectedCategory: Category = .sport
     @State private var sortOption: TodoSortOption = .all
@@ -60,13 +65,15 @@ struct ContentView: View {
                     }
                 }) { todo in
                     HStack{
-                        Image(systemName: todo.category.symbol)
-                        Image(systemName: todo.isDone ? "checkmark.circle" : "circle")
-                            .foregroundColor(todo.category.color)
-                        
-                        Spacer()
+                       
+                        todo.category.Symbol
+                        Divider()
                         Text(todo.title)
                             .foregroundColor(todo.category.color)
+                        Spacer()
+                        Image(systemName: todo.isDone ? "checkmark.circle" : "circle")
+                            .foregroundColor(todo.category.color)
+
                     }
                     .onTapGesture {
                         if let index = todos.firstIndex(where: { $0.id == todo.id }) {
