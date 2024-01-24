@@ -65,7 +65,7 @@ struct ContentView: View {
                     }
                 }) { todo in
                     HStack{
-                       
+                        
                         todo.category.Symbol
                         Divider()
                         Text(todo.title)
@@ -73,7 +73,7 @@ struct ContentView: View {
                         Spacer()
                         Image(systemName: todo.isDone ? "checkmark.circle" : "circle")
                             .foregroundColor(todo.category.color)
-
+                        
                     }
                     .onTapGesture {
                         if let index = todos.firstIndex(where: { $0.id == todo.id }) {
@@ -83,10 +83,29 @@ struct ContentView: View {
                     .listRowSeparator(.hidden)
                 }
                 .onDelete(perform: { indexSet in
-                    indexSet.forEach { index in
-                        todos.remove(at: index)
+                    for index in indexSet {
+                        let filteredTodos = todos.filter { todo in
+                            switch sortOption {
+                            case .all:
+                                return true
+                            case .work:
+                                return todo.category == .work
+                            case .privateLife:
+                                return todo.category == .privateLife
+                            case .none:
+                                return todo.category == .sport
+                            }
+                        }
+                        
+                        if index < filteredTodos.count {
+                            let todoToDelete = filteredTodos[index]
+                            if let deleteIndex = todos.firstIndex(where: { $0.id == todoToDelete.id }) {
+                                todos.remove(at: deleteIndex)
+                            }
+                        }
                     }
                 })
+                
             }
         }
     }
